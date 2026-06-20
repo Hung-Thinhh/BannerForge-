@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  banner-forge:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: banner-forge
+    restart: unless-stopped
+    ports:
+      - "3020:3020"
+    environment:
+      - NODE_ENV=production
+      - PORT=3020
+    volumes:
+      - ./prisma:/app/prisma
+      - ./public/uploads:/app/public/uploads
+      - ./tmp:/app/tmp

@@ -1,0 +1,13 @@
+node_modules
+.next
+out
+build
+dist
+.env*.local
+*.db
+*.db-journal
+tmp/*
+public/uploads/*
+.git
+Dockerfile
+.dockerignore

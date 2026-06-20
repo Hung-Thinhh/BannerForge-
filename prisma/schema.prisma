@@ -1,0 +1,77 @@
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Project {
+  id              String      @id @default(uuid())
+  name            String
+  canvasWidth     Int         @default(1200)
+  canvasHeight    Int         @default(1200)
+  outputFormat    String      @default("WEBP") // WEBP, JPEG, PNG
+  filenamePattern String      @default("{productSlug}-khung-shopee")
+  altPattern      String      @default("{productName}")
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  assets          Asset[]
+  products        Product[]
+  templates       Template[]
+  jobs            ExportJob[]
+}
+
+model Asset {
+  id        String   @id @default(uuid())
+  projectId String
+  kind      String   // BACKGROUND, FRAME, LOGO, etc.
+  name      String
+  path      String   // Đường dẫn tương đối lưu file
+  mimeType  String
+  width     Int?
+  height     Int?
+  createdAt DateTime @default(now())
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
+
+model Product {
+  id            String   @id @default(uuid())
+  projectId     String
+  name          String
+  slug          String
+  imagePath     String   // Đường dẫn ảnh sản phẩm gốc
+  brand         String?
+  category      String?
+  color         String?
+  price         String?
+  originalPrice String?
+  discount      String?
+  createdAt     DateTime @default(now())
+  project       Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
+
+model Template {
+  id        String   @id @default(uuid())
+  projectId String
+  name      String
+  schema    String   // JSON string mô tả cấu trúc Fabric canvas
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
+
+model ExportJob {
+  id         String    @id @default(uuid())
+  projectId  String
+  templateId String
+  status     String    // PENDING, PROCESSING, COMPLETED, FAILED
+  totalItems Int
+  doneItems  Int       @default(0)
+  zipPath    String?   // Đường dẫn tải file ZIP kết quả
+  error      String?
+  expiresAt  DateTime?
+  createdAt  DateTime  @default(now())
+  project    Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
