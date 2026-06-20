@@ -523,12 +523,13 @@ export default function CanvasEditor({
         if (res.obj) canvas.add(res.obj);
       });
 
-      if (selectedProductRef.current) {
+      const currentProduct = selectedProductRef.current;
+      if (currentProduct) {
         updateProductSlotRatio();
         canvas.getObjects().forEach((obj: any) => {
           if (obj.type === 'textbox' && obj.bind) {
             const key = obj.bind.replace('product.', '');
-            const val = selectedProductRef.current[key as keyof Product] || '';
+            const val = currentProduct[key as keyof Product] || '';
             obj.set({ text: String(val) });
           }
         });
